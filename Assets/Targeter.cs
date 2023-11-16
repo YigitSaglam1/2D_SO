@@ -6,14 +6,12 @@ public class Targeter : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private SO_Chest chestSO;
-    [SerializeField] private GameObject hint;
 
     private bool isInteractable;
 
     private void Start()
     {
         spriteRenderer.sprite = chestSO.closedChest;
-        hint.SetActive(false);
     }
     private void Update()
     {
@@ -21,7 +19,6 @@ public class Targeter : MonoBehaviour
         {
             //Interacted With Chest
             spriteRenderer.sprite = chestSO.openChest;
-            hint.SetActive(false);
             Debug.Log("Interacted With Chest");
         }
     }
@@ -46,12 +43,10 @@ public class Targeter : MonoBehaviour
         if (isInteractable)
         {
             isInteractable = false;
-            hint.SetActive(false);
         }
         else
         {
             isInteractable = true;
-            hint.SetActive(true);
         }
     }
 }
