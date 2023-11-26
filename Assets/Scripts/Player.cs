@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
     private Vector3 startVector;
     private Vector3 controlVector;
     private Vector3 endVector;
-
+    
     
 
     private float slashTime;
@@ -18,7 +18,7 @@ public class Player : MonoBehaviour
 
     private bool canDash = true;
     private bool canLog = true;
-    private bool isMoving = false;
+    private bool isMoving = false; //CAN BE USED
     private bool coroutinePlaying = false;
 
 
@@ -35,14 +35,27 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerInput playerInput;
     [SerializeField] private PlayerAnimator playerAnimator;
 
+    [Header("Network")]
+    private Alteruna.Avatar avatar;
+    private Camera playerCam;
+
     private void Start()
     {       
+        avatar = GetComponent<Alteruna.Avatar>();
+
+        if (!avatar.IsMe) { return; }
+
+        playerCam = Camera.main;
+        playerCam.transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z - 10f);
         topcuk.SetActive(false);
         playerMovement = GetComponent<IPlayerMovement>();
     }
 
     private void Update()
     {
+        if (!avatar.IsMe) { return; }
+
+        playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
         LookAt();
         AdjustStartEndPoint(lastMotionVector);
         
@@ -50,7 +63,7 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(Dash());
         }
-        if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying && !isMoving)
+        if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying)
         {
             StartCoroutine(handMove());
         }
@@ -61,6 +74,7 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
+
 
         playerAnimator.SetFloatHoriontal(playerInput.Horizontal);
         playerAnimator.SetFloatVertical(playerInput.Vertical);
@@ -145,8 +159,6 @@ public class Player : MonoBehaviour
 
     private void AdjustStartEndPoint(Vector2 lastMotionVector)
     {
-        if (playerInput.Horizontal != 0 || playerInput.Vertical != 0)
-        {
             if (lastMotionVector == new Vector2(1f, 0)) //RIGHT
             {
                 startPoint.transform.position = transform.position + new Vector3(0f, 0.75f, 0f);
@@ -180,7 +192,6 @@ public class Player : MonoBehaviour
                 endVector = endPoint.transform.position;
                 controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, -0.75f, 0) * 1.5f;
             }
-        }
     }
 
 
