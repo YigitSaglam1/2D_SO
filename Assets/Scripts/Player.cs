@@ -23,9 +23,8 @@ public class Player : MonoBehaviour
     private float slashSpeed = 10f;
 
     private bool canDash = true;
-    private bool isDashing= false;
     private bool canLog = true;
-    private bool isLogging = false;
+    private bool isMoving = false;
     private bool coroutinePlaying = false;
 
     private readonly int horizontalSpeedHash = Animator.StringToHash("HorizontalSpeed");
@@ -59,18 +58,18 @@ public class Player : MonoBehaviour
         {
             StartCoroutine(Dash());
         }
-        if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying && !(horizontal != 0 || vertical != 0))
+        if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying && !isMoving)
         {
-            StartCoroutine(slashMove());
+            StartCoroutine(handMove());
         }
-        if (isDashing) { return; }
-        if (isLogging) { return; }
-        Movement();
+        if (!coroutinePlaying) { Movement(); }
+        
     }
 
 
     private void Movement()
     {
+        
         animator.SetFloat(horizontalSpeedHash, horizontal);
         animator.SetFloat(verticalSpeedHash, vertical);
         if (horizontal != 0 && vertical != 0) // MOVING
@@ -98,12 +97,14 @@ public class Player : MonoBehaviour
             lastMotionVector = new Vector2(horizontal, vertical);
             lastMotionVector = lastMotionVector * 0.75f;
             animator.SetBool("isStopped", false);
+            isMoving = true;
             animator.SetFloat("LastVertical",lastMotionVector.x);
             animator.SetFloat("LastHorizontal",lastMotionVector.y);
         }
         if (horizontal == 0 && vertical == 0) // ZERO INPUT
         {
             animator.SetBool("isStopped", true);
+            isMoving = false;
         }
 
         playerRb.velocity = new Vector2(horizontal * playerSO.runSpeed, vertical * playerSO.runSpeed);
@@ -116,11 +117,10 @@ public class Player : MonoBehaviour
         topcuk.transform.Rotate(0, 0, angle);
     }
 
-    private IEnumerator slashMove()
+    private IEnumerator handMove()
     {
         coroutinePlaying = true;
         canLog = false;
-        isLogging = true;
         topcuk.transform.position = startVector;
         topcuk.SetActive(true);
         yield return null;
@@ -137,11 +137,22 @@ public class Player : MonoBehaviour
 
         yield return null;
         slashTime = 0f;
-        isLogging = false;
         canLog = true;
         coroutinePlaying = false;
         topcuk.SetActive(false);
         topcuk.transform.position = startVector;
+    }
+    private IEnumerator Dash()
+    {
+        coroutinePlaying = true;
+        canDash = false;
+        trailRenderer.emitting = true;
+        playerRb.velocity = new Vector2(horizontal * playerSO.dashingPower, vertical * playerSO.dashingPower);
+        yield return new WaitForSeconds(playerSO.dashingTime);
+        trailRenderer.emitting = false;
+        coroutinePlaying = false;
+        yield return new WaitForSeconds(playerSO.dashingCooldown);
+        canDash = true;
     }
 
     private void AdjustStartEndPoint(Vector2 lastMotionVector)
@@ -184,20 +195,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    private IEnumerator Dash()
-    {
-        coroutinePlaying = true;
-        canDash = false;
-        isDashing = true;
-        trailRenderer.emitting = true;
-        playerRb.velocity = new Vector2(horizontal * playerSO.dashingPower, vertical * playerSO.dashingPower);
-        yield return new WaitForSeconds(playerSO.dashingTime);
-        isDashing=false;
-        trailRenderer.emitting = false;
-        coroutinePlaying = false;
-        yield return new WaitForSeconds(playerSO.dashingCooldown);
-        canDash = true;
-    }
+
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
