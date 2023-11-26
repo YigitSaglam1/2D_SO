@@ -1,24 +1,18 @@
 using System.Collections;
-using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.XR;
+
 
 public class Player : MonoBehaviour
 {
 
-    Rigidbody2D playerRb;
-    Animator animator;
     
     private Vector2 lastMotionVector;
     private Vector3 startVector;
     private Vector3 controlVector;
     private Vector3 endVector;
 
-    private float horizontal;
-    private float vertical;
-    private float moveLimiter = 0.7f;
+    
+
     private float slashTime;
     private float slashSpeed = 10f;
 
@@ -27,8 +21,6 @@ public class Player : MonoBehaviour
     private bool isMoving = false;
     private bool coroutinePlaying = false;
 
-    private readonly int horizontalSpeedHash = Animator.StringToHash("HorizontalSpeed");
-    private readonly int verticalSpeedHash = Animator.StringToHash("VerticalSpeed");
 
     [SerializeField] private SO_Ally playerSO;
     [SerializeField] private TrailRenderer trailRenderer;
@@ -38,22 +30,22 @@ public class Player : MonoBehaviour
     [SerializeField] private GameObject topcuk;
     [SerializeField] private GameObject playerCenter;
 
-
+    [Header("Player Classes")]
+    public IPlayerMovement playerMovement;
+    [SerializeField] private PlayerInput playerInput;
+    [SerializeField] private PlayerAnimator playerAnimator;
 
     private void Start()
-    {
-        playerRb = GetComponent<Rigidbody2D>();
-        animator = GetComponent<Animator>();
-
+    {       
         topcuk.SetActive(false);
+        playerMovement = GetComponent<IPlayerMovement>();
     }
 
     private void Update()
     {
         LookAt();
         AdjustStartEndPoint(lastMotionVector);
-        horizontal = Input.GetAxisRaw("Horizontal");
-        vertical = Input.GetAxisRaw("Vertical");
+        
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !coroutinePlaying) 
         {
             StartCoroutine(Dash());
@@ -69,45 +61,41 @@ public class Player : MonoBehaviour
 
     private void Movement()
     {
-        
-        animator.SetFloat(horizontalSpeedHash, horizontal);
-        animator.SetFloat(verticalSpeedHash, vertical);
-        if (horizontal != 0 && vertical != 0) // MOVING
+
+        playerAnimator.SetFloatHoriontal(playerInput.Horizontal);
+        playerAnimator.SetFloatVertical(playerInput.Vertical);
+        if (playerInput.Horizontal != 0 && playerInput.Vertical != 0) //CROSS MOVING
         {
             
-            if (horizontal == -1){ spriteRenderer.flipX = true; }
-            if (horizontal == 1) { spriteRenderer.flipX = false; }
-            horizontal *= moveLimiter;
-            vertical *= moveLimiter;
-            if (horizontal != 0 || vertical != 0)
+            if (playerInput.Horizontal == -1){ spriteRenderer.flipX = true; }
+            if (playerInput.Horizontal == 1) { spriteRenderer.flipX = false; }
+
+            if (playerInput.Horizontal != 0 || playerInput.Vertical != 0)
             {
-                lastMotionVector = new Vector2(horizontal, vertical);
-                lastMotionVector = lastMotionVector * 0.75f;
+                lastMotionVector = new Vector2(playerInput.Horizontal, playerInput.Vertical);
+                
 
             }
-            if (horizontal ==-1)
-            {
-                spriteRenderer.flipX = true;
-            }
+            
         }
-        if (horizontal == -1) { spriteRenderer.flipX = true; }
-        if (horizontal == 1) { spriteRenderer.flipX = false; }
-        if (horizontal != 0 || vertical != 0) // AT LEAST ONE INPUT IS = 0
+        if (playerInput.Horizontal == -1) { spriteRenderer.flipX = true; }
+        if (playerInput.Horizontal == 1) { spriteRenderer.flipX = false; }
+        if (playerInput.Horizontal != 0 || playerInput.Vertical != 0) // AT LEAST ONE INPUT IS = 0
         {
-            lastMotionVector = new Vector2(horizontal, vertical);
-            lastMotionVector = lastMotionVector * 0.75f;
-            animator.SetBool("isStopped", false);
+            lastMotionVector = new Vector2(playerInput.Horizontal, playerInput.Vertical);
+
+            playerAnimator.SetIsStop(false);
             isMoving = true;
-            animator.SetFloat("LastVertical",lastMotionVector.x);
-            animator.SetFloat("LastHorizontal",lastMotionVector.y);
+            playerAnimator.SetLastHorizontal(lastMotionVector.x);
+            playerAnimator.SetLastVertical(lastMotionVector.y);
         }
-        if (horizontal == 0 && vertical == 0) // ZERO INPUT
+        if (playerInput.Horizontal == 0 && playerInput.Vertical == 0) // ZERO INPUT
         {
-            animator.SetBool("isStopped", true);
+            playerAnimator.SetIsStop(true);
             isMoving = false;
         }
 
-        playerRb.velocity = new Vector2(horizontal * playerSO.runSpeed, vertical * playerSO.runSpeed);
+        playerMovement.MakeMove(playerInput.Horizontal, playerInput.Vertical, playerSO.runSpeed);
     }
 
     private void LookAt()
@@ -147,7 +135,7 @@ public class Player : MonoBehaviour
         coroutinePlaying = true;
         canDash = false;
         trailRenderer.emitting = true;
-        playerRb.velocity = new Vector2(horizontal * playerSO.dashingPower, vertical * playerSO.dashingPower);
+        playerMovement.MakeMove(playerInput.Horizontal, playerInput.Vertical, playerSO.dashingPower);
         yield return new WaitForSeconds(playerSO.dashingTime);
         trailRenderer.emitting = false;
         coroutinePlaying = false;
@@ -157,9 +145,9 @@ public class Player : MonoBehaviour
 
     private void AdjustStartEndPoint(Vector2 lastMotionVector)
     {
-        if (horizontal != 0 || vertical != 0)
+        if (playerInput.Horizontal != 0 || playerInput.Vertical != 0)
         {
-            if (lastMotionVector == new Vector2(0.75f, 0)) //RIGHT
+            if (lastMotionVector == new Vector2(1f, 0)) //RIGHT
             {
                 startPoint.transform.position = transform.position + new Vector3(0f, 0.75f, 0f);
                 endPoint.transform.position = transform.position + new Vector3(0f, -0.75f, 0f);
@@ -167,7 +155,7 @@ public class Player : MonoBehaviour
                 endVector = endPoint.transform.position;
                 controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0.75f, 0, 0) * 1.5f;
             }
-            if (lastMotionVector == new Vector2(-0.75f, 0)) //LEFT
+            if (lastMotionVector == new Vector2(-1f, 0)) //LEFT
             {
                 startPoint.transform.position = transform.position + new Vector3(0f, -0.75f, 0f);
                 endPoint.transform.position = transform.position + new Vector3(0f, 0.75f, 0f);
@@ -176,7 +164,7 @@ public class Player : MonoBehaviour
                 controlVector = startVector + (endVector - startVector) / 2 + new Vector3(-0.75f, 0, 0) * 1.5f;
             }
 
-            if (lastMotionVector == new Vector2(0, 0.75f)) //UP
+            if (lastMotionVector == new Vector2(0, 1f)) //UP
             {
                 startPoint.transform.position = transform.position + new Vector3(-0.75f, 0f, 0f);
                 endPoint.transform.position = transform.position + new Vector3(0.75f, 0f, 0f);
@@ -184,7 +172,7 @@ public class Player : MonoBehaviour
                 endVector = endPoint.transform.position;
                 controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, 0.75f, 0) * 1.5f;
             }
-            if (lastMotionVector == new Vector2(0, -0.75f)) //DOWN
+            if (lastMotionVector == new Vector2(0, -1f)) //DOWN
             {
                 startPoint.transform.position = transform.position + new Vector3(0.75f, 0f, 0f);
                 endPoint.transform.position = transform.position + new Vector3(-0.75f, 0f, 0f);
