@@ -1,13 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Photon.Pun;
 using Photon.Realtime;
+using UnityEngine;
 
-public class QuickStartLobbyController : MonoBehaviourPunCallbacks
+public class DelayStartLobbyController : MonoBehaviourPunCallbacks
 {
-    [SerializeField] private GameObject quickStartButton;
-    [SerializeField] private GameObject quickCancelButton;
+    [SerializeField] private GameObject delayStartButton;
+    [SerializeField] private GameObject delayCancelButton;
     [SerializeField] private int roomSize;
 
     private int attempt;
@@ -15,15 +13,14 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         PhotonNetwork.AutomaticallySyncScene = true;
-        quickStartButton.SetActive(true);
+        delayStartButton.SetActive(true);
     }
 
-    public void QuickStartButton()
+    public void DelayStartButton()
     {
-        quickStartButton.SetActive(false);
-        quickCancelButton.SetActive(true);
+        delayStartButton.SetActive(false);
+        delayCancelButton.SetActive(true);
         PhotonNetwork.JoinRandomRoom();
-        Debug.Log("Quick Start");
     }
 
     public override void OnJoinRandomFailed(short returnCode, string message)
@@ -49,10 +46,10 @@ public class QuickStartLobbyController : MonoBehaviourPunCallbacks
             CreateRoom();
         }
     }
-    public void QuickCancelButton()
+    public void DelayCancelButton()
     {
-        quickCancelButton.SetActive(false);
-        quickStartButton.SetActive(true);
+        delayCancelButton.SetActive(false);
+        delayStartButton.SetActive(true);
         PhotonNetwork.LeaveRoom();
     }
 }
