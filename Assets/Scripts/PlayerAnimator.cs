@@ -9,7 +9,7 @@ public class PlayerAnimator : MonoBehaviour
     private readonly int isStoppedHash = Animator.StringToHash("isStopped");
     private readonly int lastVerticalHash = Animator.StringToHash("LastVertical");
     private readonly int lastHorizontalHash = Animator.StringToHash("LastHorizontal");
-    private void Start()
+    private void Awake()
     {
         animator = GetComponent<Animator>();
     }
