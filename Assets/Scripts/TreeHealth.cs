@@ -34,7 +34,7 @@ public class TreeHealth : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Tool"))
+        if (collision.CompareTag("ToolAxe"))
         {
             GetHit();
         }

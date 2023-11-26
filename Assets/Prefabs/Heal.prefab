@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 532083598601755592}
   - component: {fileID: 8126992854882167304}
   - component: {fileID: 6898750037561046943}
+  - component: {fileID: 941056895155565613}
   m_Layer: 0
   m_Name: Heal
   m_TagString: HealObject
@@ -152,3 +153,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5795007, y: 0.51480854}
   m_EdgeRadius: 0
+--- !u!114 &941056895155565613
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4141817985931099861}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a344302eafeb7642a805315512c6011, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerSO: {fileID: 11400000, guid: 5da888470b8d7b148a9bb5b0ea488a80, type: 2}
+  healObject: {fileID: 4141817985931099861}

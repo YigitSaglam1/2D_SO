@@ -19,9 +19,6 @@ public class Player : MonoBehaviour
     private float horizontal;
     private float vertical;
     private float moveLimiter = 0.7f;
-    private float Maxhealth = 100;
-    private float health;
-    private float healthGainAmount = 10f;
     private float slashTime;
     private float slashSpeed = 10f;
 
@@ -48,9 +45,8 @@ public class Player : MonoBehaviour
     {
         playerRb = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        health = Maxhealth;
+
         topcuk.SetActive(false);
-        
     }
 
     private void Update()
@@ -70,17 +66,16 @@ public class Player : MonoBehaviour
         if (isDashing) { return; }
         if (isLogging) { return; }
         Movement();
-
     }
 
 
     private void Movement()
     {
-
         animator.SetFloat(horizontalSpeedHash, horizontal);
         animator.SetFloat(verticalSpeedHash, vertical);
-        if (horizontal != 0 && vertical != 0) //Diagonal Speed Limiter
+        if (horizontal != 0 && vertical != 0) // MOVING
         {
+            
             if (horizontal == -1){ spriteRenderer.flipX = true; }
             if (horizontal == 1) { spriteRenderer.flipX = false; }
             horizontal *= moveLimiter;
@@ -98,24 +93,29 @@ public class Player : MonoBehaviour
         }
         if (horizontal == -1) { spriteRenderer.flipX = true; }
         if (horizontal == 1) { spriteRenderer.flipX = false; }
-        if (horizontal != 0 || vertical != 0)
+        if (horizontal != 0 || vertical != 0) // AT LEAST ONE INPUT IS = 0
         {
             lastMotionVector = new Vector2(horizontal, vertical);
             lastMotionVector = lastMotionVector * 0.75f;
+            animator.SetBool("isStopped", false);
+            animator.SetFloat("LastVertical",lastMotionVector.x);
+            animator.SetFloat("LastHorizontal",lastMotionVector.y);
         }
+        if (horizontal == 0 && vertical == 0) // ZERO INPUT
+        {
+            animator.SetBool("isStopped", true);
+        }
+
         playerRb.velocity = new Vector2(horizontal * playerSO.runSpeed, vertical * playerSO.runSpeed);
-        
-
-
-
     }
+
     private void LookAt()
     {
         Vector3 look = transform.InverseTransformPoint(playerCenter.transform.position);
         float angle = Mathf.Atan2(look.y, look.x) * Mathf.Rad2Deg;
-        Debug.Log(angle);
         topcuk.transform.Rotate(0, 0, angle);
     }
+
     private IEnumerator slashMove()
     {
         coroutinePlaying = true;
@@ -142,54 +142,47 @@ public class Player : MonoBehaviour
         coroutinePlaying = false;
         topcuk.SetActive(false);
         topcuk.transform.position = startVector;
-
-
-
     }
+
     private void AdjustStartEndPoint(Vector2 lastMotionVector)
     {
-        Debug.Log(lastMotionVector);
         if (horizontal != 0 || vertical != 0)
         {
             if (lastMotionVector == new Vector2(0.75f, 0)) //RIGHT
             {
-                startPoint.transform.position = transform.position + new Vector3(0f, 1f, 0f);
-                endPoint.transform.position = transform.position + new Vector3(0f, -1f, 0f);
+                startPoint.transform.position = transform.position + new Vector3(0f, 0.75f, 0f);
+                endPoint.transform.position = transform.position + new Vector3(0f, -0.75f, 0f);
                 startVector = startPoint.transform.position;
                 endVector = endPoint.transform.position;
-                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(1, 0, 0) * 1.5f;
+                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0.75f, 0, 0) * 1.5f;
             }
             if (lastMotionVector == new Vector2(-0.75f, 0)) //LEFT
             {
-                startPoint.transform.position = transform.position + new Vector3(0f, -1f, 0f);
-                endPoint.transform.position = transform.position + new Vector3(0f, 1f, 0f);
+                startPoint.transform.position = transform.position + new Vector3(0f, -0.75f, 0f);
+                endPoint.transform.position = transform.position + new Vector3(0f, 0.75f, 0f);
                 startVector = startPoint.transform.position;
                 endVector = endPoint.transform.position;
-                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(-1, 0, 0) * 1.5f;
+                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(-0.75f, 0, 0) * 1.5f;
             }
 
             if (lastMotionVector == new Vector2(0, 0.75f)) //UP
             {
-                startPoint.transform.position = transform.position + new Vector3(-1f, 0f, 0f);
-                endPoint.transform.position = transform.position + new Vector3(1f, 0f, 0f);
+                startPoint.transform.position = transform.position + new Vector3(-0.75f, 0f, 0f);
+                endPoint.transform.position = transform.position + new Vector3(0.75f, 0f, 0f);
                 startVector = startPoint.transform.position;
                 endVector = endPoint.transform.position;
-                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, 1, 0) * 1.5f;
+                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, 0.75f, 0) * 1.5f;
             }
             if (lastMotionVector == new Vector2(0, -0.75f)) //DOWN
             {
-                startPoint.transform.position = transform.position + new Vector3(1f, 0f, 0f);
-                endPoint.transform.position = transform.position + new Vector3(-1f, 0f, 0f);
+                startPoint.transform.position = transform.position + new Vector3(0.75f, 0f, 0f);
+                endPoint.transform.position = transform.position + new Vector3(-0.75f, 0f, 0f);
                 startVector = startPoint.transform.position;
                 endVector = endPoint.transform.position;
-                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, -1, 0) * 1.5f;
+                controlVector = startVector + (endVector - startVector) / 2 + new Vector3(0, -0.75f, 0) * 1.5f;
             }
         }
-
-
     }
-
-
 
     private IEnumerator Dash()
     {
@@ -204,22 +197,14 @@ public class Player : MonoBehaviour
         coroutinePlaying = false;
         yield return new WaitForSeconds(playerSO.dashingCooldown);
         canDash = true;
-        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("HealObject"))
-        {
-            health += healthGainAmount;
-            Debug.Log(health);
-            Destroy(collision.gameObject);
-        }
-        if (collision.CompareTag("EnemyWeapon"))
-        {
-            health -= healthGainAmount; // REVÝZE EDÝLECEK !
-            Debug.Log(health);
-        }
+        //if (collision.CompareTag("EnemyWeapon"))
+        //{
+        //    health -= healthGainAmount; // REVÝZE EDÝLECEK !
+        //    Debug.Log(health);
+        //}
     }
-
 }

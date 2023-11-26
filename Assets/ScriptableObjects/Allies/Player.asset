@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: 
   nameAlly: 
-  health: 0
+  health: 100
   runSpeed: 2
   damage: 5
   followDistance: 0

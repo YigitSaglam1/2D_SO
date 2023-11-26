@@ -130,6 +130,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6461648173368401765}
   - component: {fileID: 6554002229375471147}
+  - component: {fileID: 1342531562423855571}
   m_Layer: 0
   m_Name: Sword
   m_TagString: ToolSword
@@ -204,6 +205,41 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &1342531562423855571
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3179303085016428976}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.2}
+  serializedVersion: 2
+  m_Radius: 0.3
 --- !u!1 &4196121911558605474
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +281,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1378807537046056556}
   - component: {fileID: 185640913748158563}
-  - component: {fileID: 5333673935921823182}
   m_Layer: 0
   m_Name: Hand
   m_TagString: Untagged
@@ -283,41 +318,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 0}
---- !u!58 &5333673935921823182
-CircleCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5215642629409749771}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  serializedVersion: 2
-  m_Radius: 0.3
 --- !u!1 &6389044973192938847
 GameObject:
   m_ObjectHideFlags: 0
@@ -372,14 +372,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 796d6801f58e195498faa6a7bf2d3026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  toolTip: {fileID: 2138763606848388181}
   playerSO: {fileID: 11400000, guid: 5da888470b8d7b148a9bb5b0ea488a80, type: 2}
   trailRenderer: {fileID: 516562832662930898}
   spriteRenderer: {fileID: 1929829540019268146}
-  startPoint: {fileID: 0}
-  endPoint: {fileID: 0}
-  topcuk: {fileID: 0}
-  playerCenter: {fileID: 0}
+  startPoint: {fileID: 3109679586704732616}
+  endPoint: {fileID: 7180857537554867241}
+  topcuk: {fileID: 5215642629409749771}
+  playerCenter: {fileID: 6686197616791867868}
 --- !u!95 &1406434434350724388
 Animator:
   serializedVersion: 5
@@ -679,6 +678,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4149950751879452745}
   - component: {fileID: 6700261527741878952}
+  - component: {fileID: 3481145599303906394}
   m_Layer: 0
   m_Name: Axe
   m_TagString: ToolAxe
@@ -753,6 +753,41 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &3481145599303906394
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8608538818906596536}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0.1}
+  serializedVersion: 2
+  m_Radius: 0.3
 --- !u!1 &8632272938254164853
 GameObject:
   m_ObjectHideFlags: 0
