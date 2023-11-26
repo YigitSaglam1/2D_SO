@@ -36,14 +36,11 @@ public class Player : MonoBehaviour
     [SerializeField] private PlayerAnimator playerAnimator;
 
     [Header("Network")]
-    private Alteruna.Avatar avatar;
     private Camera playerCam;
 
     private void Start()
     {       
-        avatar = GetComponent<Alteruna.Avatar>();
 
-        if (!avatar.IsMe) { return; }
 
         playerCam = Camera.main;
         playerCam.transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z - 10f);
@@ -53,7 +50,6 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        if (!avatar.IsMe) { return; }
 
         playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
         LookAt();
