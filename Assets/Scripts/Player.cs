@@ -1,8 +1,9 @@
 using System.Collections;
 using UnityEngine;
+using Photon.Pun;
 
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviourPun
 {
 
     
@@ -18,13 +19,12 @@ public class Player : MonoBehaviour
 
     private bool canDash = true;
     private bool canLog = true;
-    private bool isMoving = false; //CAN BE USED
+    //private bool isMoving = false; //CAN BE USED
     private bool coroutinePlaying = false;
 
 
     [SerializeField] private SO_Ally playerSO;
     [SerializeField] private TrailRenderer trailRenderer;
-    [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private Transform startPoint;
     [SerializeField] private Transform endPoint;
     [SerializeField] private GameObject topcuk;
@@ -40,7 +40,7 @@ public class Player : MonoBehaviour
 
     private void Start()
     {       
-
+        if (!base.photonView.IsMine) { return; }    
 
         playerCam = Camera.main;
         playerCam.transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z - 10f);
@@ -50,7 +50,7 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-
+        if (!base.photonView.IsMine) { return; }
         playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
         LookAt();
         AdjustStartEndPoint(lastMotionVector);
@@ -76,35 +76,26 @@ public class Player : MonoBehaviour
         playerAnimator.SetFloatVertical(playerInput.Vertical);
         if (playerInput.Horizontal != 0 && playerInput.Vertical != 0) //CROSS MOVING
         {
-            
-            if (playerInput.Horizontal == -1){ spriteRenderer.flipX = true; }
-            if (playerInput.Horizontal == 1) { spriteRenderer.flipX = false; }
-
             if (playerInput.Horizontal != 0 || playerInput.Vertical != 0)
             {
                 lastMotionVector = new Vector2(playerInput.Horizontal, playerInput.Vertical);
-                
-
             }
-            
         }
-        if (playerInput.Horizontal == -1) { spriteRenderer.flipX = true; }
-        if (playerInput.Horizontal == 1) { spriteRenderer.flipX = false; }
+
         if (playerInput.Horizontal != 0 || playerInput.Vertical != 0) // AT LEAST ONE INPUT IS = 0
         {
             lastMotionVector = new Vector2(playerInput.Horizontal, playerInput.Vertical);
 
             playerAnimator.SetIsStop(false);
-            isMoving = true;
+            //isMoving = true;
             playerAnimator.SetLastHorizontal(lastMotionVector.x);
             playerAnimator.SetLastVertical(lastMotionVector.y);
         }
         if (playerInput.Horizontal == 0 && playerInput.Vertical == 0) // ZERO INPUT
         {
             playerAnimator.SetIsStop(true);
-            isMoving = false;
+            //isMoving = false;
         }
-
         playerMovement.MakeMove(playerInput.Horizontal, playerInput.Vertical, playerSO.runSpeed);
     }
 
