@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class GameSetupController : MonoBehaviour
 {
-    
+    public float minX;
+    public float maxX;
+    public float minY;
+    public float maxY;
+
     void Start()
     {
         CreatePlayer();
@@ -14,6 +18,7 @@ public class GameSetupController : MonoBehaviour
     private void CreatePlayer()
     {
         Debug.Log("Creating Player");
-        PhotonNetwork.Instantiate(Path.Combine("Prefabs","Player"),Vector3.zero, Quaternion.identity);
+        Vector2 randomPosition = new Vector2(Random.Range(maxX, maxX), Random.Range(minY, maxY));
+        PhotonNetwork.Instantiate(Path.Combine("Prefabs","Player"),new Vector3 (randomPosition.x, randomPosition.y, 0), Quaternion.identity);
     }
 }

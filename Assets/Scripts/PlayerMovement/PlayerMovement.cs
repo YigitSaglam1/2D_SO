@@ -6,7 +6,7 @@ public class PlayerMovement : MonoBehaviour, IPlayerMovement
 {
     Rigidbody2D playerRb;
 
-    private void Start()
+    private void Awake()
     {
         playerRb = GetComponent<Rigidbody2D>();
     }

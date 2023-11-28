@@ -1,18 +1,16 @@
 using System.Collections;
 using UnityEngine;
-using Photon.Pun;
 
 
-public class Player : MonoBehaviourPun
+
+public class Player : MonoBehaviour
 {
 
     
     private Vector2 lastMotionVector;
     private Vector3 startVector;
     private Vector3 controlVector;
-    private Vector3 endVector;
-    
-    
+    private Vector3 endVector; 
 
     private float slashTime;
     private float slashSpeed = 10f;
@@ -40,38 +38,32 @@ public class Player : MonoBehaviourPun
 
     private void Start()
     {       
-        if (!base.photonView.IsMine) { return; }    
-
-        playerCam = Camera.main;
-        playerCam.transform.position = new Vector3(transform.position.x , transform.position.y, transform.position.z - 10f);
-        topcuk.SetActive(false);
-        playerMovement = GetComponent<IPlayerMovement>();
+            playerCam = Camera.main;
+            playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
+            topcuk.SetActive(false);
+            playerMovement = GetComponent<IPlayerMovement>();
     }
 
     private void Update()
     {
-        if (!base.photonView.IsMine) { return; }
-        playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
-        LookAt();
-        AdjustStartEndPoint(lastMotionVector);
-        
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !coroutinePlaying) 
-        {
-            StartCoroutine(Dash());
-        }
-        if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying)
-        {
-            StartCoroutine(handMove());
-        }
-        if (!coroutinePlaying) { Movement(); }
-        
+            playerCam.transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z - 10f);
+            LookAt();
+            AdjustStartEndPoint(lastMotionVector);
+
+            if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && !coroutinePlaying)
+            {
+                StartCoroutine(Dash());
+            }
+            if (Input.GetKeyDown(KeyCode.F) && canLog && !coroutinePlaying)
+            {
+                StartCoroutine(handMove());
+            }
+            if (!coroutinePlaying) { Movement(); }
     }
 
 
     private void Movement()
     {
-
-
         playerAnimator.SetFloatHoriontal(playerInput.Horizontal);
         playerAnimator.SetFloatVertical(playerInput.Vertical);
         if (playerInput.Horizontal != 0 && playerInput.Vertical != 0) //CROSS MOVING
